@@ -85,12 +85,9 @@ proc up
 
 	call setCursorPosition
 
-	call drawBlack
-
 	dec [y_cord]
 
-	cmp [y_cord], 1
-	je pushDown
+	call drawBlack
 
 	call setCursorPosition
 
@@ -105,9 +102,12 @@ proc down
 
 	call setCursorPosition
 
-	call drawBlack
-
 	inc [y_cord]
+
+	cmp [y_cord], 17
+	je pushUp
+
+	call drawBlack
 
 	call setCursorPosition
 
@@ -122,9 +122,13 @@ proc left
 
 	call setCursorPosition
 
-	call drawBlack
 
 	dec [x_cord]
+
+	cmp [x_cord], 0
+	je pushRight
+
+	call drawBlack
 
 	call setCursorPosition
 
@@ -139,9 +143,12 @@ proc right
 
 	call setCursorPosition
 
-	call drawBlack
-
 	inc [x_cord]
+
+	cmp [x_cord], 13
+	je pushRight
+
+	call drawBlack
 
 	call setCursorPosition
 
@@ -190,6 +197,21 @@ jmp getKey
 
 printRight:
 	call right
+
+jmp getKey
+
+pushRight:
+	mov [x_cord], 12
+
+jmp getKey
+
+pushLeft:
+	dec [x_cord]
+
+jmp getKey
+
+pushUp:
+	dec [y_cord]
 
 jmp getKey
 
