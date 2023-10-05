@@ -99,7 +99,7 @@ proc up
 	popa
 	ret
 endp up
-; test comment for git
+; test comment forr git
 proc down
 	pusha
 
