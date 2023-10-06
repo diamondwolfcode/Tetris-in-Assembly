@@ -10,7 +10,7 @@ DATASEG
 	lines db 0
 	space db ' ','$'
 	
-	block db '##$##', '$'
+	block db '#'
 	
 	rowLen dw 13
 	colLen dw 5
@@ -37,8 +37,8 @@ DATASEG
 	screen_size dw 20
 	x_cord db 7 ;column 
 	y_cord db 6 ;row
-	x_cords dw 7,6,7,6
-	y_cords dw 7,6,7,6
+	x_cord2 dw 7,6,7,6
+	y_cord2 dw 7,6,7,6
 	color dw 0Eh ; color
 ;
 CODESEG
@@ -80,23 +80,6 @@ proc drawChar
 	ret
 endp drawChar
 
-; proc up
-; 	pusha
-
-; 	call setCursorPosition
-
-; 	dec [y_cord]
-
-; 	call drawBlack
-
-; 	call setCursorPosition
-
-; 	call drawChar
-
-; 	popa
-; 	ret
-; endp up
-; test comment forr git
 proc down
 	pusha
 
