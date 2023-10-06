@@ -151,6 +151,11 @@ start:
 	
 
 ; print game frame
+
+	mov dx, offset gameName 
+	mov ah,9h 
+	int 21h	
+
 	mov dx, offset openingscreen
 	mov ah, 9h
 	int 21h
