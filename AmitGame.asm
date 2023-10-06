@@ -80,22 +80,22 @@ proc drawChar
 	ret
 endp drawChar
 
-proc up
-	pusha
+; proc up
+; 	pusha
 
-	call setCursorPosition
+; 	call setCursorPosition
 
-	dec [y_cord]
+; 	dec [y_cord]
 
-	call drawBlack
+; 	call drawBlack
 
-	call setCursorPosition
+; 	call setCursorPosition
 
-	call drawChar
+; 	call drawChar
 
-	popa
-	ret
-endp up
+; 	popa
+; 	ret
+; endp up
 ; test comment forr git
 proc down
 	pusha
@@ -161,11 +161,6 @@ endp right
 start:
 	mov ax, @data
 	mov ds, ax
-	
-	mov bx, offset x_cords
-	mov dx, [bx]
-	mov ah,9h
-	int 21h
 
 ; clear screen by entering 40*25
 	mov ax, 13h
@@ -180,10 +175,11 @@ start:
 	mov dx, offset lines
 	mov ah, 9h
 	int 21h
-printUp:
-	call up
 
-jmp getKey
+; printUp:
+; 	call up
+
+; jmp getKey
 
 printDown:
 	call down
@@ -220,8 +216,8 @@ getkey:
 	push ax
 	int 16h
 
-	cmp al, 'w'
-	je printUp
+	; cmp al, 'w'
+	; je printUp
 
 	cmp al, 'd'
 	je printRight
