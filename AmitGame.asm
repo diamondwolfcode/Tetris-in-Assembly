@@ -36,13 +36,13 @@ DATASEG
 
 	screen_size dw 20
 	x_cord1 db 7 ;column 
-	y_cord1 db 6 ;row
-	x_cord2 db 8
-	y_cord2 db 7
-	x_cord3 db 8 ;column 
-	y_cord3 db 6 ;row
+	y_cord1 db 7 ;row
+	x_cord2 db 7
+	y_cord2 db 6
+	x_cord3 db 6 ;column 
+	y_cord3 db 7 ;row
 	x_cord4 db 6
-	y_cord4 db 7
+	y_cord4 db 6
 	color dw 0Eh ; color
 ;
 CODESEG
@@ -124,7 +124,7 @@ proc down
 
 	inc [y_cord1]
 
-	cmp [y_cord1], 17
+	cmp [y_cord1], 21
 	je pushUp
 
 	call drawBlack
@@ -137,7 +137,7 @@ proc down
 
 	inc [y_cord2]
 
-	cmp [y_cord2], 17
+	cmp [y_cord2], 21
 	je pushUp
 
 	call drawBlack
@@ -150,7 +150,7 @@ proc down
 
 	inc [y_cord3]
 
-	cmp [y_cord3], 17
+	cmp [y_cord3], 21
 	je pushUp
 
 	call drawBlack
@@ -163,7 +163,7 @@ proc down
 
 	inc [y_cord4]
 
-	cmp [y_cord4], 17
+	cmp [y_cord4], 21
 	je pushUp
 
 	call drawBlack
@@ -178,38 +178,12 @@ endp down
 proc left
 	pusha
 
-	call setCursorPosition1
-
-	dec [x_cord1]
-
-	cmp [x_cord1], 17
-	je pushUp
-
-	call drawBlack
-
-	call setCursorPosition1
-
-	call drawChar
-; 
-	call setCursorPosition2
-
-	dec [x_cord2]
-
-	cmp [x_cord2], 17
-	je pushUp
-
-	call drawBlack
-
-	call setCursorPosition2
-
-	call drawChar
-; 
 	call setCursorPosition3
 
 	dec [x_cord3]
 
-	cmp [x_cord3], 17
-	je pushUp
+	cmp [x_cord3], 0
+	je pushRight
 
 	call drawBlack
 
@@ -221,15 +195,40 @@ proc left
 
 	dec [x_cord4]
 
-	cmp [x_cord4], 17
-	je pushUp
+	cmp [x_cord4], 0
+	je pushRight
 
 	call drawBlack
 
 	call setCursorPosition4
 
 	call drawChar
+; 
+	call setCursorPosition1
 
+	dec [x_cord1]
+
+	cmp [x_cord1], 0
+	je pushRight
+
+	call drawBlack
+
+	call setCursorPosition1
+
+	call drawChar
+; 
+	call setCursorPosition2
+
+	dec [x_cord2]
+
+	cmp [x_cord2], 0
+	je pushRight
+
+	call drawBlack
+
+	call setCursorPosition2
+
+	call drawChar
 	popa
 	ret
 endp left
@@ -241,8 +240,8 @@ proc right
 
 	inc [x_cord1]
 
-	cmp [x_cord1], 17
-	je pushUp
+	cmp [x_cord1], 13
+	je pushLeft
 
 	call drawBlack
 
@@ -254,8 +253,8 @@ proc right
 
 	inc [x_cord2]
 
-	cmp [x_cord2], 17
-	je pushUp
+	cmp [x_cord2], 13
+	je pushLeft
 
 	call drawBlack
 
@@ -267,8 +266,8 @@ proc right
 
 	inc [x_cord3]
 
-	cmp [x_cord3], 17
-	je pushUp
+	cmp [x_cord3], 13
+	je pushLeft
 
 	call drawBlack
 
@@ -280,8 +279,8 @@ proc right
 
 	inc [x_cord4]
 
-	cmp [x_cord4], 17
-	je pushUp
+	cmp [x_cord4], 13
+	je pushLeft
 
 	call drawBlack
 
@@ -332,17 +331,26 @@ printRight:
 jmp getKey
 
 pushRight:
-	mov [x_cord1], 12
+	inc [x_cord1]
+	inc [x_cord2]
+	inc [x_cord3]
+	inc [x_cord4]
 
 jmp getKey
 
 pushLeft:
 	dec [x_cord1]
+	dec [x_cord2]
+	dec [x_cord3]
+	dec [x_cord4]
 
 jmp getKey
 
 pushUp:
 	dec [y_cord1]
+	dec [y_cord2]
+	dec [y_cord3]
+	dec [y_cord4]
 
 jmp getKey
 
