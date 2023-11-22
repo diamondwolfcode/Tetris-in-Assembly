@@ -8,12 +8,8 @@ DATASEG
 	gameName db 10,13,10,13, '	Tetris Plus - Press Q to Quit' ,10,13,10,13,'$'
 	score db 0
 	lines db 0
-	space db ' ','$'
 	
 	block db '#'
-	
-	rowLen dw 13
-	colLen dw 5
 	
 	openingscreen db'                       ' , 10, 13
 	db '==============' , 10, 13
@@ -34,7 +30,6 @@ DATASEG
 	db '|            |' , 10, 13
 	db '==============' , 10, 13, '$'
 
-	screen_size dw 20
 	x_cord1 db 7 ;column 
 	y_cord1 db 7 ;row
 	x_cord2 db 7
@@ -46,6 +41,42 @@ DATASEG
 	color dw 0Eh ; color
 ;
 CODESEG
+
+proc setTBlock
+	mov [x_cord1], 7
+	mov [x_cord2], 8
+	mov [x_cord3], 8
+	mov [x_cord4], 9
+	
+	mov [y_cord1], 7
+	mov [y_cord2], 7
+	mov [y_cord3], 6
+	mov [y_cord4], 7
+endp setTBlock
+
+proc setLeftLBlock
+	mov [x_cord1], 7
+	mov [x_cord2], 7
+	mov [x_cord3], 8
+	mov [x_cord4], 9
+	
+	mov [y_cord1], 6
+	mov [y_cord2], 7
+	mov [y_cord3], 7
+	mov [y_cord4], 7
+endp setLeftLBlock
+
+proc setRightLBlock
+	mov [x_cord1], 7
+	mov [x_cord2], 8
+	mov [x_cord3], 9
+	mov [x_cord4], 9
+	
+	mov [y_cord1], 7
+	mov [y_cord2], 7
+	mov [y_cord3], 7
+	mov [y_cord4], 6
+endp setRightLBlock
 
 proc setCursorPosition1
 	pusha
@@ -124,9 +155,6 @@ proc down
 
 	inc [y_cord1]
 
-	cmp [y_cord1], 21
-	je pushUp
-
 	call drawBlack
 
 	call setCursorPosition1
@@ -136,9 +164,6 @@ proc down
 	call setCursorPosition2
 
 	inc [y_cord2]
-
-	cmp [y_cord2], 21
-	je pushUp
 
 	call drawBlack
 
@@ -150,8 +175,6 @@ proc down
 
 	inc [y_cord3]
 
-	cmp [y_cord3], 21
-	je pushUp
 
 	call drawBlack
 
@@ -163,14 +186,22 @@ proc down
 
 	inc [y_cord4]
 
-	cmp [y_cord4], 21
-	je pushUp
 
 	call drawBlack
 
 	call setCursorPosition4
 
 	call drawChar
+
+	cmp [y_cord1], 20
+	jge pushUp
+	cmp [y_cord4], 20
+	jge pushUp
+	cmp [y_cord2], 20
+	jge pushUp
+	cmp [y_cord3], 20
+	jge pushUp
+
 	popa
 	ret
 endp down
@@ -310,10 +341,7 @@ start:
 	mov ah, 9h
 	int 21h
 
-; printUp:
-; 	call up
 
-; jmp getKey
 
 printDown:
 	call down
@@ -347,10 +375,7 @@ pushLeft:
 jmp getKey
 
 pushUp:
-	dec [y_cord1]
-	dec [y_cord2]
-	dec [y_cord3]
-	dec [y_cord4]
+	call setLeftLBlock
 
 jmp getKey
 
