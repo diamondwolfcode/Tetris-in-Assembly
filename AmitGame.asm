@@ -379,6 +379,11 @@ pushUp:
 
 jmp getKey
 
+gravity:
+	call down
+
+
+
 getkey:
 	mov ah, 0h
 	push ax
