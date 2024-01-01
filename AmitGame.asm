@@ -39,8 +39,84 @@ DATASEG
 	x_cord4 db 6
 	y_cord4 db 6
 	color dw 0Eh ; color
+	screen_height dw 25
+	screen_width dw 21
 ;
 CODESEG
+
+proc printGameBoard
+
+endp printGameBoard
+
+proc printString ; prints a string based on offset value stored in dx
+    pusha
+    mov ah, 9h
+    int 21h	;interrupt that displays a string
+    popa
+    ret
+endp printString
+
+proc printChr ; prints a character based on dl value. Does NOT use chr_to_print
+    pusha
+    mov ah, 2
+    int 21h
+    popa
+    ret
+endp printChr
+
+proc drawMiddleRow ; draws a middle row of the screen
+    pusha
+    mov dl, 186
+    call printChr
+    mov cx, [screen_width]
+    sub cx, 2
+    drawMid:
+        mov dl, ' '
+        call printChr
+    loop drawMid
+    mov dl, 186
+    call printChr
+    mov dl, 10
+    call printChr
+    popa
+    ret
+endp drawMiddleRow
+
+proc drawUpperRow ; draws the upper row of the screen border
+    pusha
+    mov dl, 201
+    call printChr
+    mov cx, [screen_width]
+    sub cx, 2
+    drawUp:
+        mov dl, 205
+        call printChr
+    loop drawUp
+    mov dl, 187
+    call printChr
+    mov dl, 10
+    call printChr
+    popa
+    ret
+endp drawUpperRow
+
+proc drawLowerRow ; draws the bottom row of the screen border
+    pusha
+    mov dl, 200
+    call printChr
+    mov cx, [screen_width]
+    sub cx, 2
+    drawLow:
+        mov dl, 205
+        call printChr
+    loop drawLow
+    mov dl, 188
+    call printChr
+    mov dl, 10
+    call printChr
+    popa
+    ret
+endp drawLowerRow
 
 proc setTBlock
 	mov [x_cord1], 7
@@ -193,13 +269,13 @@ proc down
 
 	call drawChar
 
-	cmp [y_cord1], 20
+	cmp [y_cord1], 25
 	jge pushUp
-	cmp [y_cord4], 20
+	cmp [y_cord4], 25
 	jge pushUp
-	cmp [y_cord2], 20
+	cmp [y_cord2], 25
 	jge pushUp
-	cmp [y_cord3], 20
+	cmp [y_cord3], 25
 	jge pushUp
 
 	popa
@@ -271,7 +347,7 @@ proc right
 
 	inc [x_cord1]
 
-	cmp [x_cord1], 13
+	cmp [x_cord1], 21
 	je pushLeft
 
 	call drawBlack
@@ -280,11 +356,12 @@ proc right
 
 	call drawChar
 ; 
+
 	call setCursorPosition2
 
 	inc [x_cord2]
 
-	cmp [x_cord2], 13
+	cmp [x_cord2], 21
 	je pushLeft
 
 	call drawBlack
@@ -297,7 +374,7 @@ proc right
 
 	inc [x_cord3]
 
-	cmp [x_cord3], 13
+	cmp [x_cord3], 21
 	je pushLeft
 
 	call drawBlack
@@ -310,7 +387,7 @@ proc right
 
 	inc [x_cord4]
 
-	cmp [x_cord4], 13
+	cmp [x_cord4], 21
 	je pushLeft
 
 	call drawBlack
@@ -321,6 +398,19 @@ proc right
 	popa
 	ret
 endp right
+
+proc drawScreen
+    pusha
+    call drawUpperRow
+    mov cx, [screen_height]
+    sub cx, 2
+    drawRows:
+        call drawMiddleRow
+    loop drawRows
+    call drawlowerRow
+    popa
+    ret
+endp drawScreen
 
 start:
 	mov ax, @data
@@ -333,15 +423,7 @@ start:
 
 ; print game frame
 
-	mov dx, offset gameName 
-	mov ah,9h 
-	int 21h	
-
-	mov dx, offset openingscreen
-	mov ah, 9h
-	int 21h
-
-
+	call drawScreen
 
 printDown:
 	call down
@@ -379,18 +461,12 @@ pushUp:
 
 jmp getKey
 
-gravity:
-	call down
-
-
 
 getkey:
+
 	mov ah, 0h
 	push ax
 	int 16h
-
-	; cmp al, 'w'
-	; je printUp
 
 	cmp al, 'd'
 	je printRight
@@ -408,7 +484,18 @@ getkey:
 
 	mov cx, 5
 
+gravity:
 
+	mov cx, 0fh
+	mov dx, 4240h
+	mov ah, 86h
+	int 15h
+
+	call printDown
+
+	loop gravity
+
+	mov cx, 5
 
 ; print: 
 ; 	pop dx
