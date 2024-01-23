@@ -6,44 +6,76 @@ p186
 DATASEG
 ;
     gameName db 10,13,10,13, '  Tetris Plus - Press Q to Quit' ,10,13,10,13,'$'
-    score db 0
+    score dw 0
     lines db 0
     
     block db '#'
     
     openingscreen db'                       ' , 10, 13
-    db '==============' , 10, 13
-    db '|            | SCORE' , 10, 13
-    db '|        | 0000' , 10, 13
-    db '|            | ' , 10, 13
-    db '|            | LEVEL' , 10, 13
-    db '|            | 0' , 10, 13
-    db '|            | LINES' , 10, 13
-    db '|            | 0' , 10, 13
-    db '|            |' , 10, 13
-    db '|            |' , 10, 13
-    db '|            |' , 10, 13
-    db '|            |' , 10, 13
-    db '|            |' , 10, 13
-    db '|            |' , 10, 13
-    db '|            |' , 10, 13
-    db '|            |' , 10, 13
-    db '==============' , 10, 13, '$'
+    db '', 10, 13
+    db '' , 10, 13
+    db ' _______  _______  _______  ______    ___   _______ ' , 10, 13
+    db '|       ||       ||       ||    _ |  |   | |       | ' , 10, 13
+    db '|_     _||    ___||_     _||   | ||  |   | |  _____| ' , 10, 13
+    db '  |   |  |   |___   |   |  |   |_||_ |   | | |_____  ' , 10, 13
+    db '  |   |  |    ___|  |   |  |    __  ||   | |_____  | ' , 10, 13
+    db '  |   |  |   |___   |   |  |   |  | ||   |  _____| | ' , 10, 13
+    db '  |___|  |_______|  |___|  |___|  |_||___| |_______|' , 10, 13
+    db '         _______  ___      __   __  _______         ' , 10, 13
+    db '        |       ||   |    |  | |  ||       |        ' , 10, 13
+    db '        |    _  ||   |    |  | |  ||  _____|        ' , 10, 13
+    db '        |   |_| ||   |    |  |_|  || |_____         ' , 10, 13
+    db '        |    ___||   |___ |       ||_____  |        ' , 10, 13
+    db '        |   |    |       ||       | _____| |        ' , 10, 13
+    db '        |___|    |_______||_______||_______|        ' , 10, 13
+    db '' , 10, 13
+    db '              Made By: Amit Filber' , 10, 13
+    db '' , 10, 13, '$'
+
+    gameOverScreen db '             ', 10, 13
+    db '_______  _______  __   __  _______', 10, 13   
+    db '|       ||   _   ||  |_|  ||       |', 10, 13    
+    db '|    ___||  |_|  ||       ||    ___|', 10, 13     
+    db '|   | __ |       ||       ||   |___', 10, 13      
+    db '|   ||  ||       ||       ||    ___|', 10, 13     
+    db '|   |_| ||   _   || ||_|| ||   |___', 10, 13      
+    db '|_______||__| |__||_|   |_||_______|', 10, 13     
+    db '_______  __   __  _______  ______', 10, 13       
+    db '|       ||  | |  ||       ||    _ |', 10, 13      
+    db '|   _   ||  |_|  ||    ___||   | ||', 10, 13      
+    db '|  | |  ||       ||   |___ |   |_||_', 10, 13     
+    db '|  |_|  ||       ||    ___||    __  |', 10, 13    
+    db '|       | |     | |   |___ |   |  | |', 10, 13    
+    db '|_______|  |___|  |_______||___|  |_|', 10, 13    
+
+
 
     x_cord1 db 7 ;column 
-    y_cord1 db 7 ;row
+    y_cord1 db 6 ;row
     x_cord2 db 7
-    y_cord2 db 6
-    x_cord3 db 6 ;column 
-    y_cord3 db 7 ;row
-    x_cord4 db 6
-    y_cord4 db 6
-    piece db 0
+    y_cord2 db 7
+    x_cord3 db 8 ;column 
+    y_cord3 db 6 ;row
+    x_cord4 db 8
+    y_cord4 db 7
+    screenChr db '#'
+    piece db 1
     color dw 0Eh ; color
     screen_height dw 25
     screen_width dw 21
 ;
 CODESEG
+
+proc gameEnterScreen ; prints "Press any button to start" title screen
+    pusha 
+    mov [x_cord1], 0
+    mov [y_cord1], 0
+    call setCursorPosition1
+    mov dx, offset openingscreen
+    call printString
+    popa 
+    ret
+endp gameEnterScreen
 
 proc random
     int 1ah ; CX:DX now hold number of clock ticks since midnight
@@ -68,7 +100,26 @@ proc random
     mov [piece],dl ; call interrupt to display a value in DL
 endp random
 
+proc readScreenChr
+    pusha
+		mov bh, 0h			; Page=0
+		mov ah, 02h			; Set cursor position function
+		mov dh, [y_cord1]		; Load the row (Y-coordinate)
+		mov dl, [x_cord1]		; Load the column (X-coordinate)
+	    int 10h				; Set the cursor position
+		call setCursorPosition1
+
+		mov ah, 08h			; Read character function
+		int 10h				; Read character at the specified position into AL
+		mov [screenChr], al	; Store the character in [screenChr]
+    popa
+    ret
+endp readScreenChr  
+
 proc choosePiece
+
+    call random
+
     cmp [piece], 0
     je printTblock
     cmp [piece], 1
@@ -322,20 +373,9 @@ proc down
 
     call drawChar
 ; 
-    call setCursorPosition2
-
-    inc [y_cord2]
-
-    call drawBlack
-
-    call setCursorPosition2
-
-    call drawChar
-; 
     call setCursorPosition3
 
     inc [y_cord3]
-
 
     call drawBlack
 
@@ -351,6 +391,17 @@ proc down
     call drawBlack
 
     call setCursorPosition4
+
+    call drawChar
+; 
+    call setCursorPosition2
+
+    inc [y_cord2]
+
+
+    call drawBlack
+
+    call setCursorPosition2
 
     call drawChar
 
@@ -428,33 +479,20 @@ endp left
 proc right
     pusha
 
-    call setCursorPosition1
+    call setCursorPosition4
 
-    inc [x_cord1]
+    inc [x_cord4]
 
-    cmp [x_cord1], 21
+    cmp [x_cord4], 21
     je pushLeft
 
     call drawBlack
 
-    call setCursorPosition1
+    call setCursorPosition4
 
     call drawChar
 ; 
 
-    call setCursorPosition2
-
-    inc [x_cord2]
-
-    cmp [x_cord2], 21
-    je pushLeft
-
-    call drawBlack
-
-    call setCursorPosition2
-
-    call drawChar
-; 
     call setCursorPosition3
 
     inc [x_cord3]
@@ -468,16 +506,29 @@ proc right
 
     call drawChar
 ; 
-    call setCursorPosition4
+    call setCursorPosition2
 
-    inc [x_cord4]
+    inc [x_cord2]
 
-    cmp [x_cord4], 21
+    cmp [x_cord2], 21
     je pushLeft
 
     call drawBlack
 
-    call setCursorPosition4
+    call setCursorPosition2
+
+    call drawChar
+; 
+    call setCursorPosition1
+
+    inc [x_cord1]
+
+    cmp [x_cord1], 21
+    je pushLeft
+
+    call drawBlack
+
+    call setCursorPosition1
 
     call drawChar
     popa
@@ -497,6 +548,53 @@ proc drawScreen
     ret
 endp drawScreen
 
+proc eraseRow ; prints a space 40 times then goes down line
+    pusha
+    mov cx, 40
+    erase_row:
+        mov dl, ' '
+        mov [color], 0
+        call printChr
+    loop erase_row
+    mov dl, 10
+    call printChr
+    popa 
+    ret
+endp eraseRow
+
+proc eraseScreen ; prints 25 lines of spaces, with procedure eraseRow
+    pusha
+    mov [x_cord1], 0
+    mov [y_cord1], 0
+    call setCursorPosition1
+    mov cx, 25
+    erase_all:
+        call eraseRow
+    loop erase_all
+    popa
+    ret
+endp eraseScreen
+
+proc callGameOver
+    pusha
+    call eraseScreen
+    mov [x_cord1], 0
+    mov [y_cord1], 0
+    call setCursorPosition1
+    mov dx, offset gameOverScreen
+    call printString
+    mov [x_cord1], 0
+    mov [y_cord1], 17
+    call setCursorPosition1
+    ;mov dx, offset score_msg
+    call printString
+    mov bl, 10
+    mov ax, [score]
+    div bl
+    popa
+    ret
+endp callGameOver
+
 start:
     mov ax, @data
     mov ds, ax
@@ -505,13 +603,17 @@ start:
     mov ax, 13h
     int 10h
     
-    call random
-    call choosePiece
+    mov dx, offset openingscreen
+	mov ah, 9h
+	int 21h
+	
+; wait for character
+	mov ah,0h
+	int 16h
 
 ; print game frame
 
     call drawScreen
-
 
 printTblock:
     call setTblock
