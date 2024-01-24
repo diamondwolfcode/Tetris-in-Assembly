@@ -594,7 +594,7 @@ proc callGameOver
     popa
     ret
 endp callGameOver
-
+;
 start:
     mov ax, @data
     mov ds, ax
