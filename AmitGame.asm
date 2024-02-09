@@ -717,6 +717,7 @@ getkey:
 
     mov cx, 5
 
+
 gravity:
 
     mov cx, 0fh
