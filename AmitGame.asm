@@ -11,60 +11,83 @@ DATASEG
     
     block db '#'
     
+    gameboard db'---------------------',10,13
+    
     openingscreen db'                       ' , 10, 13
     db '', 10, 13
     db '' , 10, 13
-    db ' _______  _______  _______  ______    ___   _______ ' , 10, 13
-    db '|       ||       ||       ||    _ |  |   | |       | ' , 10, 13
-    db '|_     _||    ___||_     _||   | ||  |   | |  _____| ' , 10, 13
-    db '  |   |  |   |___   |   |  |   |_||_ |   | | |_____  ' , 10, 13
-    db '  |   |  |    ___|  |   |  |    __  ||   | |_____  | ' , 10, 13
-    db '  |   |  |   |___   |   |  |   |  | ||   |  _____| | ' , 10, 13
-    db '  |___|  |_______|  |___|  |___|  |_||___| |_______|' , 10, 13
-    db '         _______  ___      __   __  _______         ' , 10, 13
-    db '        |       ||   |    |  | |  ||       |        ' , 10, 13
-    db '        |    _  ||   |    |  | |  ||  _____|        ' , 10, 13
-    db '        |   |_| ||   |    |  |_|  || |_____         ' , 10, 13
-    db '        |    ___||   |___ |       ||_____  |        ' , 10, 13
-    db '        |   |    |       ||       | _____| |        ' , 10, 13
-    db '        |___|    |_______||_______||_______|        ' , 10, 13
+    db ' ______  _____ _____ ' , 10, 13
+    db '|      ||    ||     ||    _ |  |   | |       | ' , 10, 13
+    db '|_   _ ||   _||_   _||   | ||  |   | |  __| ' , 10, 13
+    db '  | |   |  |_   | |  |   ||| |   | | |___  ' , 10, 13
+    db '  | |   |   _|  | |  |    _  ||   | |__  | ' , 10, 13
+    db '  | |   |  |_   | |  |   |  | ||   |  ___| | ' , 10, 13
+    db '  |_|   |____|  |_|_|  |||_| |___|' , 10, 13
+    db '         ____      _   _  ___         ' , 10, 13
+    db '        |    ||   |    |  | |  ||       |        ' , 10, 13
+    db '        |   _||   |    |  | |  ||  ___|        ' , 10, 13
+    db '        |   | ||   |    |  ||  || |___         ' , 10, 13
+    db '        |    _||   |_ |       ||___  |        ' , 10, 13
+    db '        |   |    |       ||       | ___| |        ' , 10, 13
+    db '        |_|    |__||__||___|        ' , 10, 13
     db '' , 10, 13
     db '              Made By: Amit Filber' , 10, 13
     db '' , 10, 13, '$'
 
     gameOverScreen db '             ', 10, 13
-    db '_______  _______  __   __  _______', 10, 13   
+    db ' ___  ___  _   _  ___', 10, 13   
     db '|       ||   _   ||  |_|  ||       |', 10, 13    
-    db '|    ___||  |_|  ||       ||    ___|', 10, 13     
-    db '|   | __ |       ||       ||   |___', 10, 13      
-    db '|   ||  ||       ||       ||    ___|', 10, 13     
-    db '|   |_| ||   _   || ||_|| ||   |___', 10, 13      
-    db '|_______||__| |__||_|   |_||_______|', 10, 13     
-    db '_______  __   __  _______  ______', 10, 13       
+    db '|    _||  ||  ||       ||    __|', 10, 13     
+    db '|   | _ |       ||       ||   |__', 10, 13      
+    db '|   ||  ||       ||       ||    _|', 10, 13     
+    db '|   || ||   _   || |||| ||   |_', 10, 13      
+    db '|__||| ||||   |||__|', 10, 13     
+    db ' ___  _   _  ___  __', 10, 13       
     db '|       ||  | |  ||       ||    _ |', 10, 13      
-    db '|   _   ||  |_|  ||    ___||   | ||', 10, 13      
-    db '|  | |  ||       ||   |___ |   |_||_', 10, 13     
-    db '|  |_|  ||       ||    ___||    __  |', 10, 13    
-    db '|       | |     | |   |___ |   |  | |', 10, 13    
-    db '|_______|  |___|  |_______||___|  |_|', 10, 13    
+    db '|   _   ||  ||  ||    __||   | ||', 10, 13      
+    db '|  | |  ||       ||   |_ |   |||', 10, 13     
+    db '|  ||  ||       ||    _||    _  |', 10, 13    
+    db '|       | |     | |   |_ |   |  | |', 10, 13    
+    db '|__|  |_|  |__||_|  |_|', 10, 13 
+    
 
 
 
-    x_cord1 db 7 ;column 
-    y_cord1 db 6 ;row
-    x_cord2 db 7
-    y_cord2 db 7
-    x_cord3 db 8 ;column 
-    y_cord3 db 6 ;row
-    x_cord4 db 8
-    y_cord4 db 7
+    x_cord1 db 6 ;column 
+    y_cord1 db 5 ;row
+    x_cord2 db 6
+    y_cord2 db 6
+    x_cord3 db 6 ;column 
+    y_cord3 db 7 ;row
+    x_cord4 db 6
+    y_cord4 db 8
+    x_tmp1 db 0
+    y_tmp1 db 0
+    x_tmp2 db 0
+    y_tmp2 db 0
     screenChr db '#'
     piece db 1
+    y_curr db 0
+    x_curr db 0
     color dw 0Eh ; color
-    screen_height dw 25
-    screen_width dw 21
+    screen_height db 25
+    screen_width db 21
+    count db 0
 ;
 CODESEG
+
+; proc checkCol
+;     pusha
+;     ; Calculate the pixel's memory address
+;     mov ah, 0Dh ; Function to read pixel color
+;     mov bh, 0   ; Display page number (usually 0 for single-page modes)
+;     mov cl, [x_tmp1]   ; X coordinate of the pixel
+;     mov dl, [y_tmp1]   ; Y coordinate of the pixel
+;     int 10h     ; Call BIOS interrupt
+;     ; After this call, AL will contain the color of the pixel
+;     popa
+;     ret
+; endp
 
 proc gameEnterScreen ; prints "Press any button to start" title screen
     pusha 
@@ -78,45 +101,97 @@ proc gameEnterScreen ; prints "Press any button to start" title screen
 endp gameEnterScreen
 
 proc random
-    int 1ah ; CX:DX now hold number of clock ticks since midnight
- 
-    mov ax,dx
+    popa
+    mov ah, 2Ch
+    int 21h
 
-    xor dx,dx
+    mov al, dl
+    mov ah, 0
+    mov dx, 6
+    mul dx
+    mov bx, 100
+    mov dx, 0
+    div bx
 
-    mov cx,9
-
-    div cx ; here dx contains the remainder of the division - from 0 to 9
-
-    add dx,1
-    
-    mov  ax, dx
-    xor  dx, dx
-    mov  cx, 10    
-    div  cx       ; here dx contains the remainder of the division - from 0 to 9
-
-    add  dl, '0'  ; to ascii from '0' to '9'
-
-    mov [piece],dl ; call interrupt to display a value in DL
+    mov [piece],al ; call interrupt to display a value in DL
+    pusha
+    ret
 endp random
 
 proc readScreenChr
     pusha
-		mov bh, 0h			; Page=0
-		mov ah, 02h			; Set cursor position function
-		mov dh, [y_cord1]		; Load the row (Y-coordinate)
-		mov dl, [x_cord1]		; Load the column (X-coordinate)
-	    int 10h				; Set the cursor position
-		call setCursorPosition1
+        mov bh, 0h          ; Page=0
+        mov ah, 02h         ; Set cursor position function
+        mov dh, [y_cord1]       ; Load the row (Y-coordinate)
+        mov dl, [x_cord1]       ; Load the column (X-coordinate)
+        int 10h             ; Set the cursor position
+        call setCursorPosition1
 
-		mov ah, 08h			; Read character function
-		int 10h				; Read character at the specified position into AL
-		mov [screenChr], al	; Store the character in [screenChr]
+        mov ah, 08h         ; Read character function
+        int 10h             ; Read character at the specified position into AL
+        mov [screenChr], al ; Store the character in [screenChr]
     popa
     ret
 endp readScreenChr  
 
+proc checkLineFull
+    pusha
+
+    mov dh, [screen_height]
+
+    inc dh
+    check_rows:
+        dec dh
+        
+        mov ch, [screen_width]
+        inc ch
+        check_cols:
+            mov [y_tmp2], dh
+            mov [x_tmp2], ch
+            dec ch
+            mov al, [y_tmp2]
+            mov [y_tmp1], al
+            mov al, [x_tmp2]
+            mov [x_tmp1], al
+
+            ; ; call checkCol
+
+            ; cmp ah, 0
+            ; jmp inc_counter
+            inc_counter:
+                inc [count]
+
+        loop check_cols
+        mov bh, [count]
+        cmp bh, [screen_width]
+        jmp clear_line
+
+        clear_line:
+            mov [y_curr], dh
+            ; call clearLine
+    loop check_rows
+
+    
+    popa
+    ret
+endp checkLineFull
+
+; proc clearLine:
+;     pusha
+;     mov bh, [screen_width]
+;     inc bh
+;     clear:
+;         dec bh
+;         mov [x_curr], bh
+;         call setCursorPosition
+;         call drawBlack
+;     loop clear
+;     popa
+;     ret
+; endp clearLine
+
 proc choosePiece
+    pusha
 
     call random
 
@@ -134,6 +209,9 @@ proc choosePiece
     je printZBlock
     cmp [piece], 6
     je printSBlock
+
+    popa
+    ret
 endp choosePiece
 
 proc printString ; prints a string based on offset value stored in dx
@@ -156,8 +234,8 @@ proc drawMiddleRow ; draws a middle row of the screen
     pusha
     mov dl, 186
     call printChr
-    mov cx, [screen_width]
-    sub cx, 2
+    mov cl, [screen_width]
+    sub cl, 2
     drawMid:
         mov dl, ' '
         call printChr
@@ -174,8 +252,8 @@ proc drawUpperRow ; draws the upper row of the screen border
     pusha
     mov dl, 201
     call printChr
-    mov cx, [screen_width]
-    sub cx, 2
+    mov cl, [screen_width]
+    sub cl, 2
     drawUp:
         mov dl, 205
         call printChr
@@ -192,8 +270,8 @@ proc drawLowerRow ; draws the bottom row of the screen border
     pusha
     mov dl, 200
     call printChr
-    mov cx, [screen_width]
-    sub cx, 2
+    mov cl, [screen_width]
+    sub cl, 2
     drawLow:
         mov dl, 205
         call printChr
@@ -207,6 +285,8 @@ proc drawLowerRow ; draws the bottom row of the screen border
 endp drawLowerRow
 
 proc setTBlock
+    pusha
+    mov [color], 4h
     mov [x_cord1], 7
     mov [x_cord2], 8
     mov [x_cord3], 8
@@ -216,9 +296,13 @@ proc setTBlock
     mov [y_cord2], 7
     mov [y_cord3], 6
     mov [y_cord4], 7
+    popa
+    ret
 endp setTBlock
 
 proc setLeftLBlock
+    pusha
+    mov [color], 2h
     mov [x_cord1], 7
     mov [x_cord2], 7
     mov [x_cord3], 8
@@ -228,9 +312,13 @@ proc setLeftLBlock
     mov [y_cord2], 7
     mov [y_cord3], 7
     mov [y_cord4], 7
+    popa
+    ret
 endp setLeftLBlock
 
 proc setRightLBlock
+    pusha
+    mov [color], 2h
     mov [x_cord1], 7
     mov [x_cord2], 7
     mov [x_cord3], 6
@@ -240,9 +328,13 @@ proc setRightLBlock
     mov [y_cord2], 6
     mov [y_cord3], 7
     mov [y_cord4], 6
+    popa
+    ret
 endp setRightLBlock
 
 proc setSquare
+    pusha
+    mov [color], 1h
     mov [x_cord1], 7
     mov [x_cord2], 8
     mov [x_cord3], 9
@@ -252,9 +344,13 @@ proc setSquare
     mov [y_cord2], 7
     mov [y_cord3], 7
     mov [y_cord4], 6
+    popa
+    ret
 endp setSquare
 
 proc setIblock
+    pusha
+    mov [color], 3h
     mov [x_cord1], 6
     mov [x_cord2], 7
     mov [x_cord3], 8
@@ -264,9 +360,13 @@ proc setIblock
     mov [y_cord2], 7
     mov [y_cord3], 7
     mov [y_cord4], 7
+    popa
+    ret
 endp setIblock
 
 proc setSBlock
+    pusha
+    mov [color], 0Eh
     mov [x_cord1], 6
     mov [x_cord2], 7
     mov [x_cord3], 7
@@ -276,9 +376,13 @@ proc setSBlock
     mov [y_cord2], 7
     mov [y_cord3], 6
     mov [y_cord4], 6
+    popa
+    ret
 endp setSBlock
 
 proc setZBlock
+    pusha
+    mov [color], 5h
     mov [x_cord1], 6
     mov [x_cord2], 7
     mov [x_cord3], 7
@@ -288,7 +392,21 @@ proc setZBlock
     mov [y_cord2], 6
     mov [y_cord3], 7
     mov [y_cord4], 7
+    popa
+    ret
 endp setZBlock
+
+proc setCursorPosition
+    pusha
+    mov dh, [y_curr] ; row
+    mov dl, [x_curr] ; column
+    mov bh, 0 ; page number
+    mov ah, 2
+    int 10h
+    popa
+    ret
+endp setCursorPosition
+
 
 proc setCursorPosition1
     pusha
@@ -360,59 +478,51 @@ proc drawChar
     ret
 endp drawChar
 
+proc printBlack
+    call setCursorPosition1
+    call drawBlack
+    call setCursorPosition3
+    call drawBlack
+    call setCursorPosition4
+    call drawBlack
+    call setCursorPosition2
+    call drawBlack
+    ret
+endp printBlack
+
+proc print
+    call setCursorPosition1
+    call drawChar
+    call setCursorPosition3
+    call drawChar
+    call setCursorPosition4
+    call drawChar
+    call setCursorPosition2
+    call drawChar
+    ret
+endp print
+
 proc down
     pusha
+    call printBlack
 
-    call setCursorPosition1
+    mov ah, [screen_height]
+    dec ah
 
     inc [y_cord1]
-
-    call drawBlack
-
-    call setCursorPosition1
-
-    call drawChar
-; 
-    call setCursorPosition3
-
+    cmp [y_cord1], ah
+    jge takePiece
     inc [y_cord3]
-
-    call drawBlack
-
-    call setCursorPosition3
-
-    call drawChar
-; 
-    call setCursorPosition4
-
+    cmp [y_cord3], ah
+    jge takePiece
     inc [y_cord4]
-
-
-    call drawBlack
-
-    call setCursorPosition4
-
-    call drawChar
-; 
-    call setCursorPosition2
-
+    cmp [y_cord4], ah
+    jge takePiece
     inc [y_cord2]
+    cmp [y_cord2], ah
+    jge takePiece
 
-
-    call drawBlack
-
-    call setCursorPosition2
-
-    call drawChar
-
-    cmp [y_cord1], 22
-    jge pushUp
-    cmp [y_cord4], 22
-    jge pushUp
-    cmp [y_cord2], 22
-    jge pushUp
-    cmp [y_cord3], 22
-    jge pushUp
+    call print
 
     popa
     ret
@@ -420,117 +530,42 @@ endp down
 
 proc left
     pusha
-
-    call setCursorPosition3
-
+    call printBlack
     dec [x_cord3]
-
     cmp [x_cord3], 0
     je pushRight
-
-    call drawBlack
-
-    call setCursorPosition3
-
-    call drawChar
-; 
-    call setCursorPosition4
-
     dec [x_cord4]
-
     cmp [x_cord4], 0
     je pushRight
-
-    call drawBlack
-
-    call setCursorPosition4
-
-    call drawChar
-; 
-    call setCursorPosition1
-
     dec [x_cord1]
-
     cmp [x_cord1], 0
     je pushRight
-
-    call drawBlack
-
-    call setCursorPosition1
-
-    call drawChar
-; 
-    call setCursorPosition2
-
     dec [x_cord2]
-
     cmp [x_cord2], 0
     je pushRight
 
-    call drawBlack
-
-    call setCursorPosition2
-
-    call drawChar
+    call print
     popa
     ret
 endp left
 
 proc right
     pusha
-
-    call setCursorPosition4
-
-    inc [x_cord4]
-
-    cmp [x_cord4], 21
-    je pushLeft
-
-    call drawBlack
-
-    call setCursorPosition4
-
-    call drawChar
-; 
-
-    call setCursorPosition3
-
+    call printBlack
     inc [x_cord3]
-
-    cmp [x_cord3], 21
+    cmp [x_cord3], 20
     je pushLeft
-
-    call drawBlack
-
-    call setCursorPosition3
-
-    call drawChar
-; 
-    call setCursorPosition2
-
-    inc [x_cord2]
-
-    cmp [x_cord2], 21
+    inc [x_cord4]
+    cmp [x_cord4], 20
     je pushLeft
-
-    call drawBlack
-
-    call setCursorPosition2
-
-    call drawChar
-; 
-    call setCursorPosition1
-
     inc [x_cord1]
-
-    cmp [x_cord1], 21
+    cmp [x_cord1], 20
+    je pushLeft
+    inc [x_cord2]
+    cmp [x_cord2], 20
     je pushLeft
 
-    call drawBlack
-
-    call setCursorPosition1
-
-    call drawChar
+    call print
     popa
     ret
 endp right
@@ -538,12 +573,13 @@ endp right
 proc drawScreen
     pusha
     call drawUpperRow
-    mov cx, [screen_height]
-    sub cx, 2
+    mov cl, [screen_height]
+    sub cl, 2
     drawRows:
         call drawMiddleRow
     loop drawRows
     call drawlowerRow
+    call choosePiece
     popa
     ret
 endp drawScreen
@@ -594,7 +630,7 @@ proc callGameOver
     popa
     ret
 endp callGameOver
-;
+
 start:
     mov ax, @data
     mov ds, ax
@@ -604,12 +640,12 @@ start:
     int 10h
     
     mov dx, offset openingscreen
-	mov ah, 9h
-	int 21h
-	
+    mov ah, 9h
+    int 21h
+    
 ; wait for character
-	mov ah,0h
-	int 16h
+    mov ah,0h
+    int 16h
 
 ; print game frame
 
@@ -666,26 +702,24 @@ printRight:
 jmp getKey
 
 pushRight:
-    inc [x_cord1]
-    inc [x_cord2]
-    inc [x_cord3]
-    inc [x_cord4]
+    call right
 
 jmp getKey
 
 pushLeft:
-    dec [x_cord1]
-    dec [x_cord2]
-    dec [x_cord3]
-    dec [x_cord4]
+    call left
 
 jmp getKey
 
-pushUp:
-    call setLeftLBlock
+takePiece:
+    call choosePiece
 
 jmp getKey
 
+call_check_line_full:
+    call checkLineFull
+
+jmp getKey
 
 getkey:
 
@@ -717,14 +751,12 @@ getkey:
 
     mov cx, 5
 
-
 gravity:
 
     mov cx, 0fh
     mov dx, 4240h
     mov ah, 86h
     int 15h
-
     call printDown
 
     loop gravity
