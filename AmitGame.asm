@@ -6,7 +6,6 @@ p186
 DATASEG
 ;
     gameName db 10,13,10,13, '  Tetris Plus - Press Q to Quit' ,10,13,10,13,'$'
-    score dw 0
     lines db 0
     
     block db '#'
@@ -14,44 +13,30 @@ DATASEG
     gameboard db'---------------------',10,13
     
     openingscreen db'                       ' , 10, 13
-    db '', 10, 13
+                                       
+    db '   _____ _____ _____ _____ _____ _____  ' , 10, 13
+    db '  |_   _|   __|_   _| __  |     |   __|' , 10, 13
+    db '    | | |   __| | | |    -|-   -|__   |  ' , 10, 13
+    db '    |_| |_____| |_| |__|__|_____|_____|  ' , 10, 13
+    db '       _____ __    _____ _____              ' , 10, 13
+    db '      |  _  |  |  |  |  |   __|            ' , 10, 13
+    db '      |   __|  |__|  |  |__   |            ' , 10, 13
+    db '      |__|  |_____|_____|_____|            ' , 10, 13
     db '' , 10, 13
-    db ' ______  _____ _____ ' , 10, 13
-    db '|      ||    ||     ||    _ |  |   | |       | ' , 10, 13
-    db '|_   _ ||   _||_   _||   | ||  |   | |  __| ' , 10, 13
-    db '  | |   |  |_   | |  |   ||| |   | | |___  ' , 10, 13
-    db '  | |   |   _|  | |  |    _  ||   | |__  | ' , 10, 13
-    db '  | |   |  |_   | |  |   |  | ||   |  ___| | ' , 10, 13
-    db '  |_|   |____|  |_|_|  |||_| |___|' , 10, 13
-    db '         ____      _   _  ___         ' , 10, 13
-    db '        |    ||   |    |  | |  ||       |        ' , 10, 13
-    db '        |   _||   |    |  | |  ||  ___|        ' , 10, 13
-    db '        |   | ||   |    |  ||  || |___         ' , 10, 13
-    db '        |    _||   |_ |       ||___  |        ' , 10, 13
-    db '        |   |    |       ||       | ___| |        ' , 10, 13
-    db '        |_|    |__||__||___|        ' , 10, 13
-    db '' , 10, 13
-    db '              Made By: Amit Filber' , 10, 13
+    db '        Made By: Amit Filber' , 10, 13
+    db '        Press any key to start', 10, 13
     db '' , 10, 13, '$'
 
-    gameOverScreen db '             ', 10, 13
-    db ' ___  ___  _   _  ___', 10, 13   
-    db '|       ||   _   ||  |_|  ||       |', 10, 13    
-    db '|    _||  ||  ||       ||    __|', 10, 13     
-    db '|   | _ |       ||       ||   |__', 10, 13      
-    db '|   ||  ||       ||       ||    _|', 10, 13     
-    db '|   || ||   _   || |||| ||   |_', 10, 13      
-    db '|__||| ||||   |||__|', 10, 13     
-    db ' ___  _   _  ___  __', 10, 13       
-    db '|       ||  | |  ||       ||    _ |', 10, 13      
-    db '|   _   ||  ||  ||    __||   | ||', 10, 13      
-    db '|  | |  ||       ||   |_ |   |||', 10, 13     
-    db '|  ||  ||       ||    _||    _  |', 10, 13    
-    db '|       | |     | |   |_ |   |  | |', 10, 13    
-    db '|__|  |_|  |__||_|  |_|', 10, 13 
-    
-
-
+    gameOverScreen db '             ', 10, 13                         
+db ' _____ _____ _____ _____   ', 10, 13
+db '|   __|  _  |     |   __|  ', 10, 13
+db '|  |  |     | | | |   __|  ', 10, 13
+db '|_____|__|__|_|_|_|_____|  ', 10, 13
+db ' _____ _____ _____ _____   ', 10, 13
+db '|     |  |  |   __| __  |  ', 10, 13
+db '|  |  |  |  |   __|    -|  ', 10, 13
+db '|_____|\___/|_____|__|__|  ', 10, 13
+db '                           ', 10, 13, '$'
 
     x_cord1 db 6 ;column 
     y_cord1 db 5 ;row
@@ -61,33 +46,17 @@ DATASEG
     y_cord3 db 7 ;row
     x_cord4 db 6
     y_cord4 db 8
-    x_tmp1 db 0
-    y_tmp1 db 0
-    x_tmp2 db 0
-    y_tmp2 db 0
     screenChr db '#'
+    score db 10
     piece db 1
     y_curr db 0
     x_curr db 0
     color dw 0Eh ; color
     screen_height db 25
     screen_width db 21
-    count db 0
+    isCol db 0
 ;
 CODESEG
-
-; proc checkCol
-;     pusha
-;     ; Calculate the pixel's memory address
-;     mov ah, 0Dh ; Function to read pixel color
-;     mov bh, 0   ; Display page number (usually 0 for single-page modes)
-;     mov cl, [x_tmp1]   ; X coordinate of the pixel
-;     mov dl, [y_tmp1]   ; Y coordinate of the pixel
-;     int 10h     ; Call BIOS interrupt
-;     ; After this call, AL will contain the color of the pixel
-;     popa
-;     ret
-; endp
 
 proc gameEnterScreen ; prints "Press any button to start" title screen
     pusha 
@@ -107,7 +76,7 @@ proc random
 
     mov al, dl
     mov ah, 0
-    mov dx, 6
+    mov dx, 18
     mul dx
     mov bx, 100
     mov dx, 0
@@ -137,82 +106,130 @@ endp readScreenChr
 proc checkLineFull
     pusha
 
-    mov dh, [screen_height]
+    mov dh, 0   ;set start position on y axis
+    y:
+        mov si, 0;counter for+
+        mov dl, 1
+        x:
+            mov ah,2
+            int 10h
+            mov ah, 8
+            int 10h
+            cmp al, '+'
+            jne noPlus
+                inc si
+            noPlus:
 
-    inc dh
-    check_rows:
-        dec dh
-        
-        mov ch, [screen_width]
-        inc ch
-        check_cols:
-            mov [y_tmp2], dh
-            mov [x_tmp2], ch
-            dec ch
-            mov al, [y_tmp2]
-            mov [y_tmp1], al
-            mov al, [x_tmp2]
-            mov [x_tmp1], al
+            mov ah, [screen_width]
+            sub ah, 2
+            inc dl
+            cmp dl, ah
+            jb x
 
-            ; ; call checkCol
+        inc dl
+        mov ah, 2
+        int 10h
 
-            ; cmp ah, 0
-            ; jmp inc_counter
-            inc_counter:
-                inc [count]
+        add si, 3
+        mov al, [screen_width]
+        mov ah, 0
+        cmp si, ax
+        jne noFullLine
+            mov dl, 1
+            mov ah, 2
+            int 10h
+            printPluses:
+                int 10h
+                push dx
+                mov dl, ' '
+                int 21h
+                pop dx
 
-        loop check_cols
-        mov bh, [count]
-        cmp bh, [screen_width]
-        jmp clear_line
 
-        clear_line:
-            mov [y_curr], dh
-            ; call clearLine
-    loop check_rows
+                mov bh, [score]
+                add bh, 10
+                mov [score], bh
 
-    
+                mov al, [screen_width]
+                sub al, 2
+                inc dl
+                cmp dl, al
+                jb printPluses
+
+        noFullLine:
+
+
+        inc dh
+        cmp dh, [screen_height]
+        jb y
+
+
     popa
     ret
 endp checkLineFull
 
-; proc clearLine:
-;     pusha
-;     mov bh, [screen_width]
-;     inc bh
-;     clear:
-;         dec bh
-;         mov [x_curr], bh
-;         call setCursorPosition
-;         call drawBlack
-;     loop clear
-;     popa
-;     ret
-; endp clearLine
-
 proc choosePiece
     pusha
 
-    call random
 
+    call random
+    mov [block], "#"
     cmp [piece], 0
-    je printTblock
+    je printTblock1
     cmp [piece], 1
-    je printLeftLBlock
+    je printTblock2 
     cmp [piece], 2
-    je printRightLBlock
+    je printTblock3 
     cmp [piece], 3
-    je printSquare
+    je printTblock4 
     cmp [piece], 4
-    je printIBlock
+    je printLeftLBlock1
     cmp [piece], 5
-    je printZBlock
+    je printLeftLBlock2
     cmp [piece], 6
-    je printSBlock
+    je printLeftLBlock3
+    cmp [piece], 7
+    je printLeftLBlock4
+    cmp [piece], 8
+    je printRightLBlock1
+    cmp [piece], 9
+    je printRightLBlock2
+    cmp [piece], 10
+    je printRightLBlock3
+    cmp [piece], 11
+    je printRightLBlock4
+    cmp [piece], 12
+    je printSquare
+    cmp [piece], 13
+    je printIblock1
+    cmp [piece], 14
+    je printIblock2
+    cmp [piece], 15
+    je printSBlock1
+    cmp [piece], 16
+    je printSBlock2
+    cmp [piece], 17
+    je printZBlock1
+    cmp [piece], 18
+    je printZBlock2
+
+    call checkGameOver
 
     popa
     ret
 endp choosePiece
+
+proc checkGameOver
+    cmp [y_cord1], 0
+    je gameover
+    cmp [y_cord2], 0
+    je gameover
+    cmp [y_cord3], 0
+    je gameover
+    cmp [y_cord4], 0
+    je gameover
+
+endp checkGameOver
 
 proc printString ; prints a string based on offset value stored in dx
     pusha
@@ -284,129 +301,16 @@ proc drawLowerRow ; draws the bottom row of the screen border
     ret
 endp drawLowerRow
 
-proc setTBlock
-    pusha
-    mov [color], 4h
-    mov [x_cord1], 7
-    mov [x_cord2], 8
-    mov [x_cord3], 8
-    mov [x_cord4], 9
-    
-    mov [y_cord1], 7
-    mov [y_cord2], 7
-    mov [y_cord3], 6
-    mov [y_cord4], 7
-    popa
-    ret
-endp setTBlock
-
-proc setLeftLBlock
-    pusha
-    mov [color], 2h
-    mov [x_cord1], 7
-    mov [x_cord2], 7
-    mov [x_cord3], 8
-    mov [x_cord4], 9
-    
-    mov [y_cord1], 6
-    mov [y_cord2], 7
-    mov [y_cord3], 7
-    mov [y_cord4], 7
-    popa
-    ret
-endp setLeftLBlock
-
-proc setRightLBlock
-    pusha
-    mov [color], 2h
-    mov [x_cord1], 7
-    mov [x_cord2], 7
-    mov [x_cord3], 6
-    mov [x_cord4], 6
-    
-    mov [y_cord1], 7
-    mov [y_cord2], 6
-    mov [y_cord3], 7
-    mov [y_cord4], 6
-    popa
-    ret
-endp setRightLBlock
-
-proc setSquare
-    pusha
-    mov [color], 1h
-    mov [x_cord1], 7
-    mov [x_cord2], 8
-    mov [x_cord3], 9
-    mov [x_cord4], 9
-    
-    mov [y_cord1], 7
-    mov [y_cord2], 7
-    mov [y_cord3], 7
-    mov [y_cord4], 6
-    popa
-    ret
-endp setSquare
-
-proc setIblock
-    pusha
-    mov [color], 3h
-    mov [x_cord1], 6
-    mov [x_cord2], 7
-    mov [x_cord3], 8
-    mov [x_cord4], 9
-    
-    mov [y_cord1], 7
-    mov [y_cord2], 7
-    mov [y_cord3], 7
-    mov [y_cord4], 7
-    popa
-    ret
-endp setIblock
-
-proc setSBlock
-    pusha
-    mov [color], 0Eh
-    mov [x_cord1], 6
-    mov [x_cord2], 7
-    mov [x_cord3], 7
-    mov [x_cord4], 8
-    
-    mov [y_cord1], 7
-    mov [y_cord2], 7
-    mov [y_cord3], 6
-    mov [y_cord4], 6
-    popa
-    ret
-endp setSBlock
-
-proc setZBlock
-    pusha
-    mov [color], 5h
-    mov [x_cord1], 6
-    mov [x_cord2], 7
-    mov [x_cord3], 7
-    mov [x_cord4], 8
-    
-    mov [y_cord1], 6
-    mov [y_cord2], 6
-    mov [y_cord3], 7
-    mov [y_cord4], 7
-    popa
-    ret
-endp setZBlock
-
 proc setCursorPosition
     pusha
-    mov dh, [y_curr] ; row
-    mov dl, [x_curr] ; column
+    mov dh, [x_curr] ; row
+    mov dl, [y_curr] ; column
     mov bh, 0 ; page number
     mov ah, 2
     int 10h
     popa
     ret
 endp setCursorPosition
-
 
 proc setCursorPosition1
     pusha
@@ -502,25 +406,141 @@ proc print
     ret
 endp print
 
-proc down
+proc checkBorder
     pusha
-    call printBlack
-
     mov ah, [screen_height]
-    dec ah
-
-    inc [y_cord1]
+    sub ah, 2
     cmp [y_cord1], ah
     jge takePiece
-    inc [y_cord3]
-    cmp [y_cord3], ah
-    jge takePiece
-    inc [y_cord4]
-    cmp [y_cord4], ah
-    jge takePiece
-    inc [y_cord2]
     cmp [y_cord2], ah
     jge takePiece
+    cmp [y_cord3], ah
+    jge takePiece
+    cmp [y_cord4], ah
+    jge takePiece
+    
+    popa
+    ret
+endp checkBorder
+
+proc collision  ;this procedure checks collision
+    pusha
+
+    call setCursorPosition1
+    mov ah,3
+    int 10h
+    inc dh
+    mov ah, 2
+    int 10h
+    mov ah, 8
+    mov bh, 0
+    int 10h
+    cmp al, '+'
+    je col1
+    cmp al, 205
+    jne noCol1
+        col1:
+        mov [isCol], 1
+        jmp endCol
+    noCol1:
+
+    call setCursorPosition2
+    mov ah,3
+    int 10h
+    inc dh
+    mov ah, 2
+    int 10h
+    mov ah, 8
+    mov bh, 0
+    int 10h
+    cmp al, '+'
+    je col2
+    cmp al, 205
+    jne noCol2
+        col2:
+        mov [isCol], 1
+        jmp endCol
+    noCol2:
+
+    call setCursorPosition3
+    mov ah,3
+    int 10h
+    inc dh
+    mov ah, 2
+    int 10h
+    mov ah, 8
+    mov bh, 0
+    int 10h
+    cmp al, '+'
+    je col3
+    cmp al, 205
+    jne noCol3
+        col3:
+        mov [isCol], 1
+        jmp endCol
+    noCol3:
+
+    call setCursorPosition4
+    mov ah,3
+    int 10h
+    inc dh
+    mov ah, 2
+    int 10h
+    mov ah, 8
+    mov bh, 0
+    int 10h
+    cmp al, '+'
+    je col4
+    cmp al, 205
+    jne noCol4
+        col4:
+        mov [isCol], 1
+        jmp endCol
+    noCol4:
+
+
+    mov [isCol], 0
+    endCol:
+    popa
+    ret
+endp collision
+
+proc setToPlus
+    pusha
+
+    mov [block], '+'
+    call setCursorPosition1
+    call drawChar
+    call setCursorPosition2
+    call drawChar
+    call setCursorPosition3
+    call drawChar
+    call setCursorPosition4
+    call drawChar
+
+    popa
+    ret
+endp setToPlus
+
+proc down
+    pusha
+
+
+    call printBlack
+
+    inc [y_cord1]
+    inc [y_cord3]
+    inc [y_cord4]
+    inc [y_cord2]
+
+
+    ; call checkCollison
+
+    call collision
+    cmp [isCol], 1
+    je takePiece
+
+    call checkBorder
 
     call print
 
@@ -528,47 +548,92 @@ proc down
     ret
 endp down
 
-proc left
-    pusha
-    call printBlack
-    dec [x_cord3]
-    cmp [x_cord3], 0
-    je pushRight
-    dec [x_cord4]
-    cmp [x_cord4], 0
-    je pushRight
-    dec [x_cord1]
-    cmp [x_cord1], 0
-    je pushRight
-    dec [x_cord2]
-    cmp [x_cord2], 0
-    je pushRight
-
-    call print
-    popa
-    ret
-endp left
-
 proc right
     pusha
-    call printBlack
-    inc [x_cord3]
-    cmp [x_cord3], 20
-    je pushLeft
-    inc [x_cord4]
-    cmp [x_cord4], 20
-    je pushLeft
-    inc [x_cord1]
-    cmp [x_cord1], 20
-    je pushLeft
-    inc [x_cord2]
-    cmp [x_cord2], 20
-    je pushLeft
 
-    call print
+    call setCursorPosition1
+    mov ah, 3
+    int 10h
+    add dl, 2
+    cmp dl, [screen_width]
+    jae endRight
+
+    call setCursorPosition2
+    mov ah, 3
+    int 10h
+    add dl, 2
+    cmp dl, [screen_width]
+    jae endRight
+
+    call setCursorPosition3
+    mov ah, 3
+    int 10h
+    add dl, 2
+    cmp dl, [screen_width]
+    jae endRight
+
+    call setCursorPosition4
+    mov ah, 3
+    int 10h
+    add dl, 2
+    cmp dl, [screen_width]
+    jae endRight
+
+        ;if here than no collision with walls
+        call printBlack
+        inc [x_cord1]
+        inc [x_cord2]
+        inc [x_cord3]
+        inc [x_cord4]
+        call print
+
+
+    endRight:
     popa
     ret
 endp right
+
+proc left
+    pusha
+
+    call setCursorPosition1
+    mov ah, 3
+    int 10h
+    cmp dl, 1
+    jbe endLeft
+
+    call setCursorPosition2
+    mov ah, 3
+    int 10h
+    cmp dl, 1
+    jbe endLeft
+
+    call setCursorPosition3
+    mov ah, 3
+    int 10h
+    cmp dl, 1
+    jbe endLeft
+
+    call setCursorPosition4
+    mov ah, 3
+    int 10h
+    cmp dl, 1
+    jbe endLeft
+
+        ;if here than no collision with walls
+        call printBlack
+        dec [x_cord1]
+        dec [x_cord2]
+        dec [x_cord3]
+        dec [x_cord4]
+        call print
+
+
+    endLeft:
+
+    popa
+    ret
+endp left
 
 proc drawScreen
     pusha
@@ -612,22 +677,24 @@ proc eraseScreen ; prints 25 lines of spaces, with procedure eraseRow
 endp eraseScreen
 
 proc callGameOver
-    pusha
-    call eraseScreen
+    pusha 
+
+    mov ax, 13h
+    int 10h
+
     mov [x_cord1], 0
     mov [y_cord1], 0
     call setCursorPosition1
+    call eraseScreen
     mov dx, offset gameOverScreen
     call printString
-    mov [x_cord1], 0
-    mov [y_cord1], 17
-    call setCursorPosition1
-    ;mov dx, offset score_msg
-    call printString
-    mov bl, 10
-    mov ax, [score]
-    div bl
-    popa
+
+
+    mov dl, score
+    mov ah,2
+    int 21h
+
+    popa 
     ret
 endp callGameOver
 
@@ -651,38 +718,290 @@ start:
 
     call drawScreen
 
-printTblock:
-    call setTblock
+printTblock1:
+    mov [color], 4h
+    mov [x_cord1], 7
+    mov [x_cord2], 8
+    mov [x_cord3], 8
+    mov [x_cord4], 9
+    
+    mov [y_cord1], 1
+    mov [y_cord2], 1
+    mov [y_cord3], 2
+    mov [y_cord4], 1
+    call print
 
 jmp getKey
 
-printLeftLBlock:
-    call setLeftLBlock
+printTblock2:
+    mov [color], 4h
+    mov [x_cord1], 7
+    mov [x_cord2], 8
+    mov [x_cord3], 8
+    mov [x_cord4], 8
+    
+    mov [y_cord1], 2
+    mov [y_cord2], 1
+    mov [y_cord3], 2
+    mov [y_cord4], 3
+    call print
 
 jmp getKey
 
-printRightLBlock:
-    call setRightLBlock
+printTblock3:
+    mov [color], 4h
+    mov [x_cord1], 7
+    mov [x_cord2], 7
+    mov [x_cord3], 7
+    mov [x_cord4], 8
+    
+    mov [y_cord1], 1
+    mov [y_cord2], 2
+    mov [y_cord3], 3
+    mov [y_cord4], 2
+    call print
+
+jmp getKey
+
+printTblock4:
+    mov [color], 4h
+    mov [x_cord1], 7
+    mov [x_cord2], 8
+    mov [x_cord3], 8
+    mov [x_cord4], 9
+    
+    mov [y_cord1], 1
+    mov [y_cord2], 1
+    mov [y_cord3], 2
+    mov [y_cord4], 1
+    call print
+
+jmp getKey
+
+printLeftLBlock1:
+    mov [color], 2h
+    mov [x_cord1], 7
+    mov [x_cord2], 7
+    mov [x_cord3], 8
+    mov [x_cord4], 9
+    
+    mov [y_cord1], 1
+    mov [y_cord2], 2
+    mov [y_cord3], 2
+    mov [y_cord4], 2
+    call print
+
+jmp getKey
+
+printLeftLBlock2:
+    mov [color], 2h
+    mov [x_cord1], 7
+    mov [x_cord2], 8
+    mov [x_cord3], 9
+    mov [x_cord4], 9
+    
+    mov [y_cord1], 2
+    mov [y_cord2], 2
+    mov [y_cord3], 2
+    mov [y_cord4], 1
+    call print
+
+jmp getKey
+
+printLeftLBlock3:
+    mov [color], 2h
+    mov [x_cord1], 7
+    mov [x_cord2], 7
+    mov [x_cord3], 7
+    mov [x_cord4], 8
+    
+    mov [y_cord1], 1
+    mov [y_cord2], 2
+    mov [y_cord3], 3
+    mov [y_cord4], 3
+    call print
+
+jmp getKey
+
+printLeftLBlock4:
+    mov [color], 2h
+    mov [x_cord1], 8
+    mov [x_cord2], 8
+    mov [x_cord3], 8
+    mov [x_cord4], 7
+    
+    mov [y_cord1], 1
+    mov [y_cord2], 2
+    mov [y_cord3], 3
+    mov [y_cord4], 3
+    call print
+
+jmp getKey
+
+printRightLBlock1:
+    mov [color], 2h
+    mov [x_cord1], 6
+    mov [x_cord2], 7
+    mov [x_cord3], 8
+    mov [x_cord4], 8
+    
+    mov [y_cord1], 2
+    mov [y_cord2], 2
+    mov [y_cord3], 2
+    mov [y_cord4], 1
+    call print
+
+jmp getKey
+
+printRightLBlock2:
+    mov [color], 2h
+    mov [x_cord1], 6
+    mov [x_cord2], 6
+    mov [x_cord3], 6
+    mov [x_cord4], 7
+    
+    mov [y_cord1], 1
+    mov [y_cord2], 2
+    mov [y_cord3], 3
+    mov [y_cord4], 3
+    call print
+
+jmp getKey
+
+printRightLBlock3:
+    mov [color], 2h
+    mov [x_cord1], 7
+    mov [x_cord2], 7
+    mov [x_cord3], 7
+    mov [x_cord4], 6
+    
+    mov [y_cord1], 3
+    mov [y_cord2], 2
+    mov [y_cord3], 1
+    mov [y_cord4], 1
+    call print
+
+jmp getKey
+
+printRightLBlock4:
+    mov [color], 2h
+    mov [x_cord1], 7
+    mov [x_cord2], 6
+    mov [x_cord3], 8
+    mov [x_cord4], 8
+    
+    mov [y_cord1], 1
+    mov [y_cord2], 1
+    mov [y_cord3], 1
+    mov [y_cord4], 2
+    call print
 
 jmp getKey
 
 printSquare:
-    call setSquare
+    mov [color], 1h
+    mov [x_cord1], 7
+    mov [x_cord2], 8
+    mov [x_cord3], 9
+    mov [x_cord4], 9
+    
+    mov [y_cord1], 2
+    mov [y_cord2], 2
+    mov [y_cord3], 2
+    mov [y_cord4], 1
+    call print
 
 jmp getKey
 
-printIBlock:
-    call setIblock
+printIBlock1:
+    mov [color], 3h
+    mov [x_cord1], 6
+    mov [x_cord2], 7
+    mov [x_cord3], 8
+    mov [x_cord4], 9
+    
+    mov [y_cord1], 1
+    mov [y_cord2], 1
+    mov [y_cord3], 1
+    mov [y_cord4], 1
+    call print
 
 jmp getKey
 
-printSBlock:
-    call setSBlock
+printIBlock2:
+    mov [color], 3h
+    mov [x_cord1], 7
+    mov [x_cord2], 7
+    mov [x_cord3], 7
+    mov [x_cord4], 7
+    
+    mov [y_cord1], 1
+    mov [y_cord2], 2
+    mov [y_cord3], 3
+    mov [y_cord4], 4
+    call print
 
 jmp getKey
 
-printZBlock:
-    call setZBlock
+printSBlock1:
+    mov [color], 0Eh
+    
+    mov [x_cord1], 6
+    mov [x_cord2], 7
+    mov [x_cord3], 7
+    mov [x_cord4], 8
+    
+    mov [y_cord1], 2
+    mov [y_cord2], 2
+    mov [y_cord3], 1
+    mov [y_cord4], 1
+    call print
+
+jmp getKey
+
+printSBlock2:
+    mov [color], 0Eh
+    
+    mov [x_cord1], 6
+    mov [x_cord2], 6
+    mov [x_cord3], 7
+    mov [x_cord4], 7
+    
+    mov [y_cord1], 3
+    mov [y_cord2], 2
+    mov [y_cord3], 2
+    mov [y_cord4], 1
+    call print
+
+jmp getKey
+
+printZBlock1:
+    mov [color], 5h
+    mov [x_cord1], 8
+    mov [x_cord2], 7
+    mov [x_cord3], 7
+    mov [x_cord4], 6
+    
+    mov [y_cord1], 2
+    mov [y_cord2], 2
+    mov [y_cord3], 1
+    mov [y_cord4], 1
+    call print
+
+jmp getKey
+
+printZBlock2:
+    mov [color], 5h
+    mov [x_cord1], 7
+    mov [x_cord2], 7
+    mov [x_cord3], 8
+    mov [x_cord4], 8
+    
+    mov [y_cord1], 2
+    mov [y_cord2], 1
+    mov [y_cord3], 1
+    mov [y_cord4], 2
+    call print
 
 jmp getKey
 
@@ -712,14 +1031,17 @@ pushLeft:
 jmp getKey
 
 takePiece:
+    call setToPlus
+    call checkLineFull
     call choosePiece
 
 jmp getKey
 
-call_check_line_full:
-    call checkLineFull
+gameover:
+    call callGameOver
 
 jmp getKey
+
 
 getkey:
 
@@ -746,6 +1068,9 @@ getkey:
 
     cmp al, 'q'
     je exit
+
+    cmp al, 'y'
+    je gameover
 
     loop getkey
 
